@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/ksl_pms?characterEncoding=utf-8&useUnicode=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  # jackson框架的相关配置
+  jackson:
+    # 服务器端响应JSON结果时，JSON结果中默认包含哪些属性(属性值不为null时会包含在JSON结果中）
+    default-property-inclusion: non_null
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+server:
+  port: 9080
+knife4j:
+  enable: true
+# 日志相关配置
+logging:
+  # 日志的显示级别
+  level:
+    # 包（package）
+    cn.coloray.website: trace
+# 当前项目中的自定义配置
+website:
+  # 与JWT相关的配置
+  jwt:
+    # 生成和解析JWT时使用的secret-key
+    secret-key: 8ugLIU$#%^*&dlii9MutjKJoHhldSF)JFDL*urfda(&%&^invjfdsa
+    # JWT的有效时长
+    duration-in-minute: 14400

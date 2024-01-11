@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.coloray.website.mapper.AdminMapper">
+    <sql id="Base_Column_List">
+        username,
+        password,
+        nickname,
+        avatar,
+        phone,
+        email,
+        description,
+        enable,
+        last_login_ip,
+        login_count,
+        gmt_last_login,
+        gmt_create,
+        gmt_modified
+    </sql>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into ams_admin (
+        <include refid="Base_Column_List"/>
+        )
+        values (
+        #{admin.username},
+        #{admin.password},
+        #{admin.nickname},
+        #{admin.avatar},
+        #{admin.phone},
+        #{admin.email},
+        #{admin.description},
+        #{admin.enable},
+        #{admin.lastLoginIp},
+        #{admin.loginCount},
+        #{admin.gmtLastLogin},
+        #{admin.gmtCreate},
+        #{admin.gmtModified}
+        )
+    </insert>
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id">
+        insert into ams_admin (
+        <include refid="Base_Column_List"/>
+        )
+        values
+        <foreach collection="list" item="admin" separator=",">
+            (#{admin.username},
+            #{admin.password},
+            #{admin.nickname},
+            #{admin.avatar},
+            #{admin.phone},
+            #{admin.email},
+            #{admin.description},
+            #{admin.enable},
+            #{admin.lastLoginIp},
+            #{admin.loginCount},
+            #{admin.gmtLastLogin},
+            #{admin.gmtCreate},
+            #{admin.gmtModified})
+        </foreach>
+    </insert>
+    <delete id="deleteById" parameterType="int">
+        delete
+        from ams_admin
+        where id = #{id}
+    </delete>
+    <delete id="deleteByIds" parameterType="long[]">
+        delete from ams_admin where id in
+        <foreach collection="array" item="id" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="update" parameterType="cn.coloray.website.pojo.entity.Admin">
+        update ams_admin
+        set username     = #{username},
+            password     = #{password},
+            nickname     = #{nickname},
+            avatar        = #{avatar},
+            phone        = #{phone},
+            email        = #{email},
+            description  = #{description},
+            enable       = #{enable},
+            lastLoginIp  = #{lastLoginIp},
+            loginCount   = #{loginCount},
+            gmtLastLogin = #{gmtLastLogin},
+            gmtCreate    = #{gmtCreate},
+            gmtModified  = #{gmtModified}
+        where id = #{id}
+    </update>
+
+    <select id="count" resultType="int">
+        select count(*)
+        from ams_admin
+    </select>
+    <select id="getUserByName" resultMap="StandardResultMap">
+        select
+        <include refid="LoginInfoQuery"/>
+        from
+        ams_admin
+        left join ams_admin_role on ams_admin.id = ams_admin_role.admin_id
+        left join ams_role_permission on ams_admin_role.role_id = ams_role_permission.role_id
+        left join ams_permission on ams_role_permission.permission_id = ams_permission.id
+        where
+        username = #{username}
+    </select>
+
+    <sql id="LoginInfoQuery">
+        <if test="true">
+        ams_admin.id,
+        ams_admin.username,
+        ams_admin.password,
+        ams_admin.enable,
+        ams_permission.value
+        </if>
+    </sql>
+
+    <resultMap id="StandardResultMap" type="cn.coloray.website.pojo.vo.AdminLogInfoVO">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="enable" property="enable"/>
+        <collection property="permissions" ofType="String">
+            <constructor>
+                <arg column="value"/>
+            </constructor>
+        </collection>
+    </resultMap>
+    <select id="listItems" resultMap="ListResultMap">
+        select id,
+               <include refid="Base_Column_List"/>
+        from ams_admin
+        order by id desc
+    </select>
+    <resultMap id="ListResultMap" type="cn.coloray.website.pojo.vo.AdminListItemVO">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar" property="avatar"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="description" property="description"/>
+        <result column="enable" property="enable"/>
+        <result column="lastLoginIp" property="lastLoginIp"/>
+        <result column="lastLoginTime" property="lastLoginTime"/>
+        <result column="gmtCreate" property="gmtCreate"/>
+        <result column="gmtModified" property="gmtModified"/>
+    </resultMap>
+</mapper>
